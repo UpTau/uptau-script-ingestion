@@ -17,10 +17,7 @@ request(options, function (err, res, body) {
         console.log("Something's wrong: ", err);
         return;
     }
-
     let data = JSON.parse(body);
-
-
     data.forEach(coin => {
         collection.doc(coin.symbol).set({
             rank: parseInt(coin.rank),
@@ -37,13 +34,13 @@ request(options, function (err, res, body) {
             name: coin.name,
             id: coin.id,
             price_btc: parseFloat(coin.price_btc)
-        })
+        }, {merge: true})
             .then(function () {
                 console.log("Document successfully written!");
             })
             .catch(function (error) {
                 console.error("Error writing document (" + coin.symbol + ") : ", error);
-                fs.appendFile('error.log', coin.symbol + "\n", function (err) {
+                fs.appendFile('error.log', JSON.stringify(coin) + "\n", function (err) {
                     if (err) throw err;
                     console.log('Saved!');
                 });
